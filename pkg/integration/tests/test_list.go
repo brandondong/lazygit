@@ -161,6 +161,7 @@ var tests = []*components.IntegrationTest{
 	file.Gitignore,
 	file.RememberCommitMessageAfterFail,
 	file.StageChildrenRangeSelect,
+	file.StageDeletedRangeSelect,
 	file.StageRangeSelect,
 	filter_and_search.FilterCommitFiles,
 	filter_and_search.FilterFiles,
