@@ -406,6 +406,9 @@ func (self *FilesController) pressWithLock(selectedNodes []*filetree.FileNode) e
 	if someNodesHaveUnstagedChanges(selectedNodes) {
 		self.c.LogAction(self.c.Tr.Actions.StageFile)
 
+		// Staging already staged deleted files/folders would fail.
+		selectedNodes = filterNodesHaveUnstagedChanges(selectedNodes)
+
 		if err := self.optimisticChange(selectedNodes, self.optimisticStage); err != nil {
 			return err
 		}
@@ -1025,6 +1028,12 @@ func someNodesHaveUnstagedChanges(nodes []*filetree.FileNode) bool {
 
 func someNodesHaveStagedChanges(nodes []*filetree.FileNode) bool {
 	return lo.SomeBy(nodes, (*filetree.FileNode).GetHasStagedChanges)
+}
+
+func filterNodesHaveUnstagedChanges(nodes []*filetree.FileNode) []*filetree.FileNode {
+	return lo.Filter(nodes, func(node *filetree.FileNode, _ int) bool {
+		return node.GetHasUnstagedChanges()
+	})
 }
 
 func (self *FilesController) canRemove(selectedNodes []*filetree.FileNode) *types.DisabledReason {
